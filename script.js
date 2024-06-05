@@ -60,7 +60,9 @@ class App {
 
     constructor() {
 
-      this._getPositiont();
+       this._getPositiont();
+
+       this._getLocalStorageData();
       form.addEventListener('submit', this._newWorkout.bind(this))
       inputType.addEventListener('change', this._toggleClimbField);
       containerWorkouts.addEventListener('click', this._moveToWorkout.bind(this))
@@ -95,6 +97,9 @@ class App {
               // .openPopup();
 
       this.#map.on('click', this._showForm.bind(this));
+      this.#workouts.forEach(workout => {
+        this._displayWorkout(workout)
+      })
 
     }
     _showForm (e) {
@@ -165,6 +170,8 @@ class App {
       //Очистить поля формы
       this._hideInputForm();
       clearInput();
+      //Добавить в localStorage
+      this._addWorkoutsToLocalStorage();
 
     }
     _displayWorkout (workout) {
@@ -239,6 +246,25 @@ class App {
         }
       })
 
+  }
+
+  _addWorkoutsToLocalStorage () {
+      localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+
+  }
+  _getLocalStorageData () {
+     const data = JSON.parse(localStorage.getItem('workouts'));
+    // console.log(data);
+    if (!data) return;
+    this.#workouts = data;
+    this.#workouts.forEach(workout => {
+      this._displayWorkoutOnSidebar(workout);
+
+    })
+  }
+  reset () {
+      localStorage.removeItem('workouts');
+      location.reload();
   }
 }
 
